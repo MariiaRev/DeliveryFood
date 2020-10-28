@@ -22,9 +22,18 @@ let login = localStorage.getItem('gloDelivery');
 
 function toggleModalAuth() {
   modalAuth.classList.toggle("is-open");
+  if(modalAuth.classList.contains('is-open')) {
+    disableScroll();
+  }
+  else {
+    enableScroll();
+  }
 }
 
-
+function clearForm() {  
+  loginInput.style.borderColor = '';
+  logInForm.reset();
+}
 
 function authorized() {
 
@@ -38,8 +47,6 @@ function authorized() {
     buttonOut.style.display = '';    
   }
 
-  console.log('authorized');
-
   userName.textContent = login;
 
   authButton.style.display = 'none';
@@ -51,15 +58,15 @@ function authorized() {
 }
 
 function notAuthorized() {
-  console.log('not authorized');
-
   function logIn(event)
   {    
     event.preventDefault();
-    login = loginInput.value;
+    login = loginInput.value.trim();        //trim удаляет пробелы справа и слева    
 
-    if(login === '')
-      alert('Введите логин!');
+    if(!login) {
+      loginInput.style.borderColor = '#ff0000';
+      loginInput.value = '';
+    }
     else {    
       localStorage.setItem('gloDelivery', login);
 
@@ -67,7 +74,6 @@ function notAuthorized() {
       authButton.removeEventListener('click', toggleModalAuth);
       closeAuth.removeEventListener('click', toggleModalAuth);
       logInForm.removeEventListener('submit', logIn);
-      logInForm.reset();
     checkAuth();
     }
   }
@@ -75,7 +81,13 @@ function notAuthorized() {
   authButton.addEventListener('click', toggleModalAuth);
   closeAuth.addEventListener('click', toggleModalAuth);
   logInForm.addEventListener('submit', logIn);
+  modalAuth.addEventListener('click', function(event) {
+    if(event.target.classList.contains('is-open')) {
+      toggleModalAuth();
+    }});
 }
+
+authButton.addEventListener('click', clearForm);
 
 function checkAuth()
 {
